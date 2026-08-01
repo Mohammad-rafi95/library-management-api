@@ -131,14 +131,14 @@
         document.getElementById('bookForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const newBook = {
-                title: document.getElementById('title').value.trim(),
-                author: document.getElementById('author').value.trim(),
-                isbn: document.getElementById('isbn').value.trim(),
-                publishedYear: parseInt(document.getElementById('publishedYear').value),
-                genre: document.getElementById('genre').value.trim() || 'General',
-                summary: document.getElementById('summary').value.trim() || 'No summary'
-            };
+         const newBook = {
+          title: document.getElementById('title').value.trim(),
+          author: document.getElementById('author').value.trim(),
+          isbn: document.getElementById('isbn').value.trim(),
+          publishedYear: parseInt(document.getElementById('publishedYear').value),
+          genre: document.getElementById('genre').value.trim(),
+          summary: document.getElementById('summary').value.trim()
+};
 
             fetch(API_BASE, {
                 method: 'POST',
