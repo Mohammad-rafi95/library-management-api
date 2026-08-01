@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>📚 Library Management</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        h1, h3 {
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        form {
+            background: #f1f3f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .book-item {
+            border-bottom: 1px solid #e9ecef;
+            padding: 15px 0;
+        }
+        .book-item strong {
+            font-size: 18px;
+        }
+        .book-meta {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        #bookList {
+            margin-top: 10px;
+        }
+        .empty-msg {
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Library Management System</h1>
+        
+        <!-- Add Book Form -->
+        <form id="bookForm">
+            <h3>Add a New Book</h3>
+            <input type="text" id="title" placeholder="Title *" required>
+            <input type="text" id="author" placeholder="Author *" required>
+            <input type="text" id="isbn" placeholder="ISBN *" required>
+            <input type="number" id="publishedYear" placeholder="Published Year *" required>
+            <input type="text" id="genre" placeholder="Genre (e.g., Fiction, Science)">
+            <input type="text" id="summary" placeholder="Summary (optional)">
+            <button type="submit">➕ Add Book</button>
+        </form>
+
+        <!-- Book List -->
+        <h3>All Books</h3>
+        <div id="bookList">
+            <p class="empty-msg">Loading books...</p>
+        </div>
+    </div>
+
+    <script>
+        // Since the HTML is served from the same domain, we can use relative URL!
+        const API_BASE = '/api/books';
+
+        // Function to fetch and display books
+        function loadBooks() {
+            fetch(API_BASE)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch books');
+                    }
+                    return response.json();
+                })
+                .then(books => {
+                    const list = document.getElementById('bookList');
+                    if (books.length === 0) {
+                        list.innerHTML = '<p class="empty-msg">📭 No books in the library yet. Add one above!</p>';
+                        return;
+                    }
+                    
+                    let html = '';
+                    books.forEach(book => {
+                        html += `
+                            <div class="book-item">
+                                <strong>${book.title}</strong><br>
+                                <span class="book-meta">✍️ ${book.author} | 📅 ${book.publishedYear} | 🏷️ ${book.genre || 'General'}</span><br>
+                                <span>${book.summary || 'No summary available'}</span>
+                            </div>
+                        `;
+                    });
+                    list.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error loading books:', error);
+                    document.getElementById('bookList').innerHTML = 
+                        '<p style="color: red;">❌ Failed to load books. Please check if the backend is running.</p>';
+                });
+        }
+
+        // Handle form submission (Add Book)
+        document.getElementById('bookForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const newBook = {
+                title: document.getElementById('title').value.trim(),
+                author: document.getElementById('author').value.trim(),
+                isbn: document.getElementById('isbn').value.trim(),
+                publishedYear: parseInt(document.getElementById('publishedYear').value),
+                genre: document.getElementById('genre').value.trim() || 'General',
+                summary: document.getElementById('summary').value.trim() || 'No summary'
+            };
+
+            fetch(API_BASE, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newBook)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to add book');
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Clear the form
+                document.getElementById('bookForm').reset();
+                // Reload the book list
+                loadBooks();
+                alert('✅ Book added successfully!');
+            })
+            .catch(error => {
+                console.error('Error adding book:', error);
+                alert('❌ Failed to add book. Please try again.');
+            });
+        });
+
+        // Load books when the page loads
+        window.onload = loadBooks;
+    </script>
+</body>
+</html>
