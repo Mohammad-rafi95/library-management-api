@@ -56,4 +56,9 @@ public class BookController {
         bookRepository.deleteById(id);
         return "Book deleted!";
     }
+    @GetMapping("/health")
+public String health() {
+    return "OK";
+}
+
 }
