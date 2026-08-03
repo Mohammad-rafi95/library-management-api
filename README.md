@@ -2,6 +2,10 @@
 
 A robust RESTful API built with **Java** and **Spring Boot** to manage library books. Supports full **CRUD operations** (Create, Read, Update, Delete) with a clean layered architecture.
 
+## 🌐 Live Demo
+Check out the live application here:  
+[https://library-management-api-production-25fc.up.railway.app/](https://library-management-api-production-25fc.up.railway.app/)
+
 ## 🚀 Tech Stack
 - **Java 17**
 - **Spring Boot 4.x**
